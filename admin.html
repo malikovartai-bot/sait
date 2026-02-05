@@ -247,11 +247,18 @@
 
       async function saveToServer(){
         try{
-          const res = await fetch('/api/admin/events', {
+          let res = await fetch('/save-afisha', {
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body: JSON.stringify({ events: data })
           });
+          if(res.status === 404){
+            res = await fetch('/api/admin/events', {
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ events: data })
+            });
+          }
           if(!res.ok){
             let text = await res.text();
             throw new Error((res.status ? res.status + ' ' : '') + (text || res.statusText));
@@ -259,7 +266,7 @@
           showNotice('Успешно сохранено на сервере');
         }catch(err){
           console.error(err);
-          showNotice('Сохранение на сервер не удалось: '+err.message,5000);
+          showNotice('Сохранение на сервер не удалось: '+err.message+'. Скачайте JSON и обновите файл вручную.',7000);n
         }
       }
 
